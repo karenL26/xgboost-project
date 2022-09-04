@@ -39,13 +39,13 @@ df.drop(df[(df['Fare'] > 66)].index, inplace=True)
 df.drop(df[(df['SibSp'] > 2)].index, inplace=True)
 df.drop(df[(df['Age'] > 65)].index, inplace=True)
 # Merge SibSp and Parch in new column to indicate number of family members on board
-df["realtives"] = df["SibSp"] + df["Parch"]
+df["relatives"] = df["SibSp"] + df["Parch"]
 # Encoding the 'Sex' column
 df['Sex'] = df['Sex'].map({'male' : 0, 'female': 1})
 # Encoding the 'Embarked' column
 df['Embarked'] = df['Embarked'].map({'S' : 0, 'C': 1, 'Q': 2})
 # Drop irrelevant columns as PassengerId, Name, Ticket, Cabin
-df=df.drop(columns=['Cabin', 'PassengerId', 'Name', 'Ticket'])
+df=df.drop(columns=['Cabin', 'PassengerId', 'Name', 'Ticket', 'SibSp', 'Parch'])
 
 #####################
 # Model and results #
@@ -58,7 +58,7 @@ X,y = ros.fit_resample(X_inb,y_inb)
 # Spliting the dataset into training and testing
 X_train, X_test, y_train, y_test = train_test_split(X,y,test_size=0.2,random_state=40)
 
-pipeline = make_pipeline(StandardScaler(), XGBClassifier(colsample_bytree = 0.5, eta= 0.05, gamma= 0.0, max_depth= 15, min_child_weight= 1, n_estimators= 100))
+pipeline = make_pipeline(StandardScaler(), XGBClassifier(colsample_bytree = 0.7, eta= 0.05, gamma= 0.1, max_depth= 15, min_child_weight= 1, n_estimators= 100))
 pipeline.fit(X_train, y_train)
 y_pred=pipeline.predict(X_test)
 cm = confusion_matrix(y_test, y_pred, labels=pipeline.classes_)
